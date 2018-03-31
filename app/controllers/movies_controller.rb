@@ -1,17 +1,37 @@
 class MoviesController < ApplicationController
 
-  def movie_params
+ def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
-  end
-
-  def show
-    id = params[:id] # retrieve movie ID from URI route
-    @movie = Movie.find(id) # look up movie by unique ID
-    # will render app/views/movies/show.<extension> by default
-  end
-
+ end
+ 
   def index
-    @movies = Movie.all
+    session[:sort] = params[:sort] if params[:sort]
+    session[:ratings] = params[:ratings] if params[:ratings]
+    @title = 'hilite' if session[:sort] == 'title'
+    @release_date = 'hilite' if session[:sort] == 'release_date'
+
+    if session[:sort] != params[:sort] || session[:ratings] != params[:ratings]
+      flash.keep
+      redirect_to movies_path(:sort => session[:sort], :ratings => session[:ratings])
+    end
+
+    
+    #fill session hash with params
+    @all_ratings = Movie.order(:rating).select(:rating).map(&:rating).uniq
+    @checked_ratings = check
+    @checked_ratings.each do |rating|
+      params[rating] = true
+      
+    #if statement (params)
+
+    end
+
+    if params[:sort]
+      @movies = Movie.order(params[:sort])
+    else
+      @movies = Movie.where(:rating => @checked_ratings)
+    end
+    
   end
 
   def new
@@ -28,6 +48,11 @@ class MoviesController < ApplicationController
     @movie = Movie.find params[:id]
   end
 
+   def show
+    @movie = Movie.find params[:id]
+  end
+
+
   def update
     @movie = Movie.find params[:id]
     @movie.update_attributes!(movie_params)
@@ -40,6 +65,16 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+
+  private
+
+  def check
+    if params[:ratings]
+      params[:ratings].keys
+    else
+      @all_ratings
+    end
   end
 
 end
