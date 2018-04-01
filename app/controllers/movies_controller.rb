@@ -15,19 +15,19 @@ class MoviesController < ApplicationController
       redirect_to movies_path(:sort => session[:sort], :ratings => session[:ratings])
     end
 
-    
-    #fill session hash with params
     @all_ratings = Movie.order(:rating).select(:rating).map(&:rating).uniq
-    @checked_ratings = check
+    @checked_ratings = checkratings
     @checked_ratings.each do |rating|
       params[rating] = true
       
-    #if statement (params)
-
     end
 
     if params[:sort]
-      @movies = Movie.order(params[:sort])
+      if params[:ratings] != @all_ratings
+        @movies = Movie.where(:rating => @checked_ratings).order(params[:sort])
+      else
+        @movies = Movie.order(params[:sort])
+      end
     else
       @movies = Movie.where(:rating => @checked_ratings)
     end
@@ -69,7 +69,7 @@ class MoviesController < ApplicationController
 
   private
 
-  def check
+  def checkratings
     if params[:ratings]
       params[:ratings].keys
     else
