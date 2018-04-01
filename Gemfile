@@ -52,9 +52,10 @@ group :development, :test do
 end
 
 group :production do
-  gem 'pg' # for Heroku deployment
+  gem 'pg', '~> 1.0'
   gem 'rails_12factor'
 end
 
+gem 'pg', '~> 1.0'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
