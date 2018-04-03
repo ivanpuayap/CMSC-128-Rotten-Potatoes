@@ -1,1 +1,0 @@
-# CMSC-128-Rotten-Potatoes
