@@ -36,7 +36,7 @@ gem 'themoviedb'
 
 group :development, :test do
   gem 'byebug'
-
+  gem 'sqlite3'
   gem 'rspec-rails'
   gem 'guard-rspec'
   gem 'web-console', '~> 2.0'

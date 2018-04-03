@@ -1,5 +1,4 @@
-class MoviesController < ApplicationController
-
+ class MoviesController < ApplicationController
  def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
  end
@@ -7,6 +6,7 @@ class MoviesController < ApplicationController
   def index
     session[:sort] = params[:sort] if params[:sort]
     session[:ratings] = params[:ratings] if params[:ratings]
+
     @title = 'hilite' if session[:sort] == 'title'
     @release_date = 'hilite' if session[:sort] == 'release_date'
 
@@ -17,8 +17,9 @@ class MoviesController < ApplicationController
 
     @all_ratings = Movie.order(:rating).select(:rating).map(&:rating).uniq
     @checked_ratings = checkratings
+
     @checked_ratings.each do |rating|
-      params[rating] = true
+      params[rating] = true 
       
     end
 
